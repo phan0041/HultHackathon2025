@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Files</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="upload.html">Tell</a>
+        <a href="page1.html">Review</a>
+        <a href="page2.html">Treat</a>
+    </nav>
+    
+    <div class="upload-container">
+        <h1>Tell me anything</h1>
+        <div class="triangle-container">
+            <!-- Button 1: Upload Multiple Files -->
+            <button class="circle-button" id="upload-files-btn" style="background-color: #4CAF50;">
+                Upload Files
+            </button>
+
+            <!-- Button 2: Journal Entry -->
+            <button class="circle-button" id="journal-entry-btn" style="background-color: #45a049;">
+                Journal Entry
+            </button>
+
+            <!-- Button 3: Random Info/Comment -->
+            <button class="circle-button" id="random-info-btn" style="background-color: #2196F3;">
+                Random Info
+            </button>
+        </div>
+    </div>
+
+    <!-- Pop-ups -->
+    <!-- Pop-up 1: Upload Multiple Files -->
+    <div id="upload-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2>Upload Multiple Files</h2>
+            <input type="file" multiple>
+            <button class="submit-btn">Upload</button>
+        </div>
+    </div>
+
+    <!-- Pop-up 2: Journal Entry -->
+    <div id="journal-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2>Journal Entry</h2>
+            <form>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title">
+                
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date">
+                
+                <label for="tags">Tags:</label>
+                <input type="text" id="tags" name="tags">
+                
+                <label for="body">Body Text:</label>
+                <textarea id="body" name="body" rows="4"></textarea>
+                
+                <label for="attachments">Attachments:</label>
+                <input type="file" id="attachments" name="attachments" multiple>
+                
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pop-up 3: Random Info/Comment -->
+    <div id="random-info-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2>Random Information/Comment</h2>
+            <textarea placeholder="Enter your comment or information here..." rows="4"></textarea>
+            <button class="submit-btn">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to handle pop-ups
+        const uploadBtn = document.getElementById('upload-files-btn');
+        const journalBtn = document.getElementById('journal-entry-btn');
+        const randomInfoBtn = document.getElementById('random-info-btn');
+
+        const uploadPopup = document.getElementById('upload-popup');
+        const journalPopup = document.getElementById('journal-popup');
+        const randomInfoPopup = document.getElementById('random-info-popup');
+
+        const closeBtns = document.querySelectorAll('.close-btn');
+
+        // Open pop-ups
+        uploadBtn.addEventListener('click', () => {
+            uploadPopup.style.display = 'flex';
+        });
+
+        journalBtn.addEventListener('click', () => {
+            journalPopup.style.display = 'flex';
+        });
+
+        randomInfoBtn.addEventListener('click', () => {
+            randomInfoPopup.style.display = 'flex';
+        });
+
+        // Close pop-ups
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                uploadPopup.style.display = 'none';
+                journalPopup.style.display = 'none';
+                randomInfoPopup.style.display = 'none';
+            });
+        });
+
+        // Close pop-ups when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target.classList.contains('popup')) {
+                uploadPopup.style.display = 'none';
+                journalPopup.style.display = 'none';
+                randomInfoPopup.style.display = 'none';
+            }
+        });
+
+        // Handle journal entry form submission
+        document.querySelector('#journal-popup form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+
+            // Get form data
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value;
+            const tags = document.getElementById('tags').value;
+            const body = document.getElementById('body').value;
+            const attachments = document.getElementById('attachments').files;
+
+            // Display the data in the console (or handle it as needed)
+            console.log('Title:', title);
+            console.log('Date:', date);
+            console.log('Tags:', tags);
+            console.log('Body:', body);
+            console.log('Attachments:', attachments);
+
+            // Close the pop-up after submission
+            document.getElementById('journal-popup').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

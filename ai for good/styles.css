@@ -1,0 +1,221 @@
+/* Zen-inspired color scheme */
+:root {
+    --wood: #8B4513;       /* Warm brown for wood */
+    --bamboo: #6B8E23;     /* Light green for bamboo */
+    --slate: #708090;      /* Gray for slate */
+    --water: #4682B4;     /* Blue for water */
+    --zen-background: #F5F5DC; /* Light beige for a calming background */
+    --dark-teal: #006D77;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--zen-background);
+    text-align: center;
+}
+
+/* Navigation bar styles (for pages with menu bar) */
+nav {
+    background-color: var(--slate);
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Welcome page styles */
+.container {
+    padding: 20px;
+}
+
+h1 {
+    font-size: 3.5rem; /* Larger text */
+    color: var(--slate);
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.5rem; /* Larger text */
+    color: var(--wood);
+    margin-bottom: 40px;
+}
+
+.bubble-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* Increased spacing between bubbles */
+    margin-top: 30px;
+}
+
+.bubble {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px; /* Larger bubbles */
+    height: 200px; /* Larger bubbles */
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    font-size: 1.8rem; /* Larger text inside bubbles */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.bubble:hover {
+    transform: scale(1.1); /* Slightly grow on hover */
+}
+
+/* Unique colors for each bubble */
+#upload-bubble {
+    background-color: var(--water);
+}
+
+#upload-bubble:hover {
+    background-color: #5F9EA0; /* Darker water tone */
+}
+
+#page1-bubble {
+    background-color: var(--bamboo);
+}
+
+#page1-bubble:hover {
+    background-color: #556B2F; /* Darker bamboo tone */
+}
+
+#page2-bubble {
+    background-color: var(--wood);
+}
+
+#page2-bubble:hover {
+    background-color: #A0522D; /* Darker wood tone */
+}
+
+/* Upload page styles */
+.upload-container {
+    padding: 20px;
+}
+
+.triangle-container {
+    position: relative;
+    width: 600px; /* Increased width for more spacing */
+    height: 520px; /* Increased height for more spacing */
+    margin: 50px auto;
+}
+
+.circle-button {
+    width: 200px; /* Larger bubbles */
+    height: 200px; /* Larger bubbles */
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.5rem; /* Larger text */
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.circle-button:hover {
+    transform: scale(1.1);
+}
+
+/* Position the buttons at the vertices of a triangle */
+#upload-files-btn {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#journal-entry-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+#random-info-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+/* Pop-up styles */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 30px; /* Increased padding */
+    border-radius: 10px;
+    width: 450px; /* Wider pop-up */
+    text-align: center;
+    margin: 0 20px; /* Add space on the sides */
+}
+
+.popup-content h2 {
+    margin-top: 0;
+}
+
+.popup-content input, .popup-content textarea {
+    width: calc(100% - 20px); /* Adjust width to account for padding */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.popup-content .submit-btn {
+    background-color: var(--water);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup-content .submit-btn:hover {
+    background-color: #5F9EA0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Image container */
+.image-container {
+    max-width: 800px; /* Adjust the maximum width of the image */
+    margin: 0 auto; /* Center the image horizontally */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    overflow: hidden; /* Ensure the image stays within the container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add a subtle shadow */
+}
+
+/* Image styles */
+.image-container img {
+    width: 100%; /* Make the image responsive */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Remove extra space below the image */
+}
