@@ -21,6 +21,7 @@ openai_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize Neo4j driver
 neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_username, neo4j_password))
+neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_username, neo4j_password))
 
 # Initialize Qdrant client
 qdrant_client = QdrantClient(
@@ -71,16 +72,144 @@ def openai_llm_parser(prompt):
 
     return GraphComponents.model_validate_json(completion.choices[0].message.content)
 
+# def openai_mental_health_parser(prompt: str):
+#     """
+#     Extracts mental health-related relationships from the provided text using OpenAI's GPT-4o model.
+#
+#     Args:
+#         prompt (str): The input text containing potential mental health-related relationships.
+#
+#     Returns:
+#         dict: A dictionary containing the extracted relationships in the specified JSON format.
+#     """
+#     completion = openai.ChatCompletion.create(
+#         model="gpt-4o-2024-08-06",
+#         response_format={"type": "json_object"},
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content":
+#
+#                     (
+#                     "You are a precise mental health relationship extractor."
+#                     "Extract all relationships from the text that pertain to mental health aspects and format them as a JSON object with this exact structure:"
+#                     "{"
+#                     "  \"mental_health_graph\": ["
+#                     "    {"
+#                     "      \"node\": \"Subject Entity\","
+#                     "      \"target_node\": \"Related Entity\","
+#                     "      \"relationship\": \"Type of Relationship\""
+#                     "    },"
+#                     "    ...more relationships..."
+#                     "  ]"
+#                     "}"
+#                     "Focus on relationships involving:"
+#                     "- Emotional states (e.g., 'feels anxious', 'is depressed')"
+#                     "- Behaviors (e.g., 'avoids social interaction', 'engages in self-harm')"
+#                     "- Social connections (e.g., 'has supportive friend', 'experiences family conflict')"
+#                     "- Life events impacting mental health (e.g., 'lost job', 'recently divorced')"
+#                     "Include both explicit and implicit relationships that could influence mental health. Be thorough and precise in your extraction."
+#                 )
+#             },
+#             {
+#                 "role": "user",
+#                 "content": prompt
+#             }
+#         ]
+#     )
+#
+#     return completion.choices[0].message.content
+
+def openai_mental_health_parser(prompt: str):
+    """
+    Extracts mental health-related relationships from the provided text using OpenAI's GPT-4o model.
+
+    Args:
+        prompt (str): The input text containing potential mental health-related relationships.
+
+    Returns:
+        str: A JSON-formatted string containing the extracted relationships.
+    """
+    completion = client.chat.completions.create(
+        model="gpt-4o-2024-08-06",
+        response_format={"type": "json_object"},
+        messages=[
+            {
+                "role": "system",
+                "content":
+
+                """You are a precise mental health relationship extractor.
+
+                Extract all relationships from the text that pertain to mental health aspects and format them as a JSON object with this exact structure:
+                
+                {
+                    "graph": [
+                        {"node": "Person/Entity", 
+                         "target_node": "Related Entity", 
+                         "relationship": "Type of Relationship"},
+                        ...more relationships...
+                    ]
+                }
+                
+                Focus on relationships involving:
+                - Emotional states (e.g., 'feels anxious', 'is depressed')
+                - Behaviors (e.g., 'avoids social interaction', 'engages in self-harm')
+                - Social connections (e.g., 'has supportive friend', 'experiences family conflict')
+                - Life events impacting mental health (e.g., 'lost job', 'recently divorced')
+                
+                Include both explicit and implicit relationships that could influence mental health. Be thorough and precise in your extraction."""
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+    return GraphComponents.model_validate_json(completion.choices[0].message.content)
+
+def open_llm_emotion_parser(prompt):
+    completion = client.chat.completions.create(
+        model="gpt-4o-2024-08-06",
+        response_format={"type": "json_object"},
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a mental health relationship extractor."
+                           "From the provided text, identify and extract all relationships that pertain to mental health aspects. Format the output as a JSON object with the following structure:{  \"mental_health_graph\": [    {      \"node\": \"Subject Entity\",      \"target_node\": \"Related Entity\",      \"relationship\": \"Type of Relationship\"    },    ...more relationships...  ]}Focus on relationships involving:- Emotional states (e.g., 'feels anxious', 'is depressed')- Behaviors (e.g., 'avoids social interaction', 'engages in self-harm')- Social connections (e.g., 'has supportive friend', 'experiences family conflict')- Life events impacting mental health (e.g., 'lost job', 'recently divorced')Include both explicit and implicit relationships that could influence mental health. Be thorough and precise in your extraction."
+            },
+            {
+                "role": "user",
+                "prompt": prompt
+            }
+        ]
+    )
+
+    return GraphComponents.model_validate_json(completion.choices[0].message.content)
+
 def extract_graph_components(raw_data):
-    prompt = f"Extract nodes and relationships from the following text:\n{raw_data}"
+    prompt = f"Extract nodes and relationships from the following text:{raw_data}"
 
-    parsed_response = openai_llm_parser(prompt)  # Assuming this returns a list of dictionaries
-    parsed_response = parsed_response.graph  # Assuming the 'graph' structure is a key in the parsed response
 
+    relation_response = openai_llm_parser(prompt)
+    relation_graph = relation_response.graph
+
+    print("Got base graph")
+
+    # Extract mental health-specific relationships
+    emotion_response = openai_mental_health_parser(prompt)
+
+    print("Emotional Response:", emotion_response)
+    mental_health_graph = getattr(emotion_response, 'graph', [])
+
+
+    combined_graph = relation_graph + mental_health_graph
     nodes = {}
     relationships = []
 
-    for entry in parsed_response:
+    print("Combined graph")
+
+    for entry in combined_graph:
         node = entry.node
         target_node = entry.target_node  # Get target node if available
         relationship = entry.relationship  # Get relationship if available
@@ -100,6 +229,8 @@ def extract_graph_components(raw_data):
                 "type": relationship
             })
 
+
+    print("Extracted")
     return nodes, relationships
 
 def ingest_to_neo4j(nodes, relationships):

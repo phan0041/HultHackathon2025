@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h1>Your overview</h1> <!-- Heading -->
+    <button id="retrieve-btn">Retrieve Journal</button>
+    <div id="insights-response"></div>
+</div>
+
+<script>
+    document.getElementById('retrieve-btn').addEventListener('click', async () => {
+        query = "Tell me the overall mental health of the user who wrote these journals?"
+
+        try {
+            const response = await fetch('/retrieve_journal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: query })
+            });
+
+            const data = await response.json();
+
+            const responseDiv = document.getElementById('insights-response');
+            if (response.ok) {
+                responseDiv.textContent = data.response;
+            } else {
+                responseDiv.textContent = `Error: ${data.error}`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('insights-response').textContent = 'An error occurred while retrieving the insights.';
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h1>Hello</h1>
+    <p>How are you feeling today?</p>
+
+    <div class="bubble-container">
+        <a href="{{ url_for('upload') }}" class="bubble" id="upload-bubble">Tell</a>
+        <a href="{{ url_for('insights') }}" class="bubble" id="page1-bubble">Review</a>
+        <a href="{{ url_for('treatment') }}" class="bubble" id="page2-bubble">Treat</a>
+    </div>
+</div>
+{% endblock %}

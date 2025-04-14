@@ -1,0 +1,292 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="upload-container">
+    <h1>Tell me anything</h1>
+    <div class="triangle-container">
+        <!-- Button 1: Upload Multiple Files -->
+        <button class="circle-button" id="upload-files-btn" style="background-color: #4CAF50;">
+            Upload Files
+        </button>
+
+        <!-- Button 2: Journal Entry -->
+        <button class="circle-button" id="journal-entry-btn" style="background-color: #45a049;">
+            Journal Entry
+        </button>
+
+        <!-- Button 3: Random Info/Comment -->
+        <button class="circle-button" id="random-info-btn" style="background-color: #2196F3;">
+            Random Info
+        </button>
+    </div>
+</div>
+
+<!-- Pop-ups -->
+<!-- Pop-up 1: Upload Multiple Files -->
+<div id="upload-popup" class="popup">
+    <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Upload Multiple Files</h2>
+        <input type="file" id="file-input" multiple>
+        <button id="multi-file-upload" class="submit-btn">Upload</button>
+    </div>
+</div>
+
+
+<!-- Pop-up 2: Journal Entry -->
+<div id="journal-popup" class="popup">
+    <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Journal Entry</h2>
+        <form>
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title">
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date">
+
+            <label for="tags">Tags:</label>
+            <input type="text" id="tags" name="tags">
+
+            <label for="body">Body Text:</label>
+            <textarea id="body" name="body" rows="4"></textarea>
+
+            <label for="attachments">Attachments:</label>
+            <input type="file" id="attachments" name="attachments" multiple>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</div>
+
+<!-- Pop-up 3: Random Info/Comment -->
+<div id="random-info-popup" class="popup">
+    <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Random Information/Comment</h2>
+        <textarea id="additional-info" placeholder="Enter your comment or information here..." rows="4"></textarea>
+        <button id="additional-info-submit" class="submit-btn">Submit</button>
+    </div>
+</div>
+
+<div>
+    <button id="full-submission" type="submit">Submit Journal</button>
+</div>
+
+<script>
+    // JavaScript to handle pop-ups
+    const uploadBtn = document.getElementById('upload-files-btn');
+    const journalBtn = document.getElementById('journal-entry-btn');
+    const randomInfoBtn = document.getElementById('random-info-btn');
+
+    const uploadPopup = document.getElementById('upload-popup');
+    const journalPopup = document.getElementById('journal-popup');
+    const randomInfoPopup = document.getElementById('random-info-popup');
+
+    const closeBtns = document.querySelectorAll('.close-btn');
+
+    // Open pop-ups
+    uploadBtn.addEventListener('click', () => {
+        uploadPopup.style.display = 'flex';
+    });
+
+    journalBtn.addEventListener('click', () => {
+        journalPopup.style.display = 'flex';
+    });
+
+    randomInfoBtn.addEventListener('click', () => {
+        randomInfoPopup.style.display = 'flex';
+    });
+
+    // Close pop-ups
+    closeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            uploadPopup.style.display = 'none';
+            journalPopup.style.display = 'none';
+            randomInfoPopup.style.display = 'none';
+        });
+    });
+
+    // Close pop-ups when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target.classList.contains('popup')) {
+            uploadPopup.style.display = 'none';
+            journalPopup.style.display = 'none';
+            randomInfoPopup.style.display = 'none';
+        }
+    });
+
+    // Handle journal entry form submission
+    document.querySelector('#journal-popup form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting the traditional way
+
+        // Get form data
+        const title = document.getElementById('title').value;
+        const date = document.getElementById('date').value;
+        const tags = document.getElementById('tags').value;
+        const body = document.getElementById('body').value;
+        const attachments = document.getElementById('attachments').files;
+
+        // Display the data in the console (or handle it as needed)
+        console.log('Title:', title);
+        console.log('Date:', date);
+        console.log('Tags:', tags);
+        console.log('Body:', body);
+        console.log('Attachments:', attachments);
+
+        // Close the pop-up after submission
+        document.getElementById('journal-popup').style.display = 'none';
+
+
+        // ATTEMPT
+    });
+
+    let journalInfo = null;
+    let additionalFiles = [];
+    let additionalInfo = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select the submit button and textarea elements
+        const submitBtn = document.getElementById('additional-info-submit')
+        const textarea = document.getElementById('additional-info');
+
+        // Add a click event listener to the submit button
+        submitBtn.addEventListener('click', function () {
+            // Update the additionalInfo variable with the textarea content
+            additionalInfo = textarea.value;
+
+            // Optional: Log the value to the console for verification
+            console.log('Additional Info:', additionalInfo);
+
+            // Optional: Clear the textarea after submission
+            textarea.value = '';
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select the file input and upload button elements
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('multi-file-upload');
+
+        // Add a click event listener to the upload button
+        uploadBtn.addEventListener('click', function () {
+            // Retrieve the selected files from the file input
+            const files = fileInput.files;
+
+            // Check if any files are selected
+            if (files.length === 0) {
+                alert('Please select at least one file to upload.');
+                return;
+            }
+
+            // Convert the FileList to an array and store in uploadedFiles
+            let uploadedFiles = Array.from(files);
+
+            // Optional: Log the uploaded files to the console
+            console.log('Uploaded Files:', uploadedFiles);
+
+            additionalFiles = uploadedFiles
+
+            // Optional: Clear the file input after capturing the files
+            fileInput.value = '';
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('#journal-popup form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            // Extract basic fields
+            const title = formData.get('title') || '';
+            const date = formData.get('date') || '';
+            const tags = formData.get('tags') || '';
+            const content = formData.get('body') || '';
+            const prompt = tags; // Assuming 'tags' corresponds to 'prompt'
+
+            // Process attachments
+            const attachments = [];
+            const files = formData.getAll('attachments');
+            files.forEach(file => {
+                attachments.push({
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                    // Optional: Read file content as base64
+                    // content: await fileToBase64(file)
+                });
+            });
+
+            // Construct the journal entry object
+            const journalEntry = {
+                title,
+                content,
+                prompt,
+                date,
+                attachments
+            };
+
+            journalInfo = Object.assign({}, journalEntry);
+
+            // Convert to JSON string if needed
+            const jsonPayload = JSON.stringify(journalEntry, null, 4);
+            console.log(jsonPayload);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const submitAllBtn = document.getElementById('full-submission');
+
+        submitAllBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            if (!journalInfo) {
+                alert('Please complete the journal entry before submitting.');
+                return;
+            }
+
+            // Construct the metadata object
+            const metadata = {
+                ...journalInfo,
+                additionalInfo: additionalInfo || ''
+            };
+
+            // Prepare FormData for submission
+            const formData = new FormData();
+            formData.append('metadata', JSON.stringify(metadata));
+
+            // Append additional files
+            additionalFiles.forEach(file => {
+                formData.append('attachments', file);
+            });
+
+            try {
+                const response = await fetch('/submit_journal', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.error}`);
+                    return;
+                }
+
+                const result = await response.json();
+                alert('Journal submitted successfully!');
+                console.log('Server response:', result);
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('An error occurred while submitting the journal.');
+            }
+        });
+    });
+
+
+</script>
+{% endblock %}
